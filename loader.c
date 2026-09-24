@@ -3,14 +3,55 @@
 #include <errno.h>
 
 
+/*
+ * Loads an image from a raw image file using memory-mapped I/O.
+ *
+ * The file is expected to be in the raw format written by
+ * saveimage_mmap: a struct image header followed immediately by the
+ * pixel data. This is not a BMP file. The file is mapped into memory,
+ * the header is copied into image, and the pixel data is copied into
+ * a newly allocated buffer.
+ *
+ * The size of the mapping is computed from image->width and
+ * image->height, so the caller must set these to the expected
+ * dimensions before calling. They are then overwritten with the
+ * values stored in the file.
+ *
+ * The pixel buffer is allocated here and must be freed by the caller.
+ *
+ * Returns 0 on success, or -1 if the file cannot be opened or mapped.
+ */
 int loadimage_mmap(char* filename, struct image* image) {
 	return 0;
 }
 
+/*
+ * Saves an image to a raw image file using memory-mapped I/O.
+ *
+ * Creates the file with permissions 0644, or truncates it if it
+ * already exists, then resizes it to hold a struct image header
+ * followed by the pixel data. The file is mapped into memory, the
+ * header and pixels are copied into the mapping, and the mapping is
+ * synchronously flushed to disk.
+ *
+ * The output is a raw dump of in-memory structures, not a BMP file,
+ * and is intended to be read back with loadimage_mmap on the same
+ * platform.
+ *
+ * Returns 0 on success, or -1 if the file cannot be opened or mapped.
+ * A failed flush to disk is reported but still returns 0.
+ */
 int saveimage_mmap(char* filename, struct image* image) {
 	return 0;
 }
 
+
+/*
+ * Loads an uncompressed 24-bit BMP file into an image.
+ *
+ * Returns 0 on success, or -1 if the file cannot be opened or is not
+ * a 24-bit BMP.
+ */
 int loadimage(char* filename, struct image* image) {
     int fd = open(filename, O_RDONLY);
 	uint32_t x, y;
@@ -54,6 +95,10 @@ int loadimage(char* filename, struct image* image) {
 	return 0;
 }
 
+/*
+ * Saves an image to disk as an uncompressed 24-bit BMP file.
+ * Returns 0 on success, or 1 if the file cannot be opened.
+ */
 int saveimage(char* filename, struct image* image) {
     /* Create if the file does not exist, overwrite otherwise. Set
 	 * file permissions: 0644 */

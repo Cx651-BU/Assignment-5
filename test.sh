@@ -57,7 +57,12 @@ else
     cat valgrind.log
 fi
 
-X=150
+echo "TEST: plotted images are present"
+if [ -f "plot.png" ]; then
+    ((score+=1))
+else
+    echo "  --FAIL!"
+fi
 
 
 echo "TEST: cli fault mode generates a pagefault"
@@ -86,4 +91,4 @@ else
     echo "  --FAIL!"
 fi
 
-echo "SCORE: $score/7"
+echo "SCORE: $score/10"

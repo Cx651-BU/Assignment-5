@@ -110,18 +110,29 @@ filepath: images/sky.bmp width: 640 height 426
 
 ## Part 2: Memory Contention
 
-How much memory does an instance of your program use?
-Run multiple copies of this process. What is the memory usage?
+Let's now inspect how our operating system behaves when we have several memory-hungry operations running simultaneously. 
 
+
+You will need to have the `smem` util installed:
+```sudo apt install smem```
+
+`smem` displays details about how your program is using memory and how much it is using:
+- **Resident Set Size (RSS):** RSS represents the portion of a process’s memory that is held in RAM. This includes memory shared with other processes (e.g., shared libraries). Tools like top or htop display RSS, which gives a general sense of how much memory a process is using, but it doesn’t differentiate between shared and exclusive memory.
+- **Unique Set Size (USS):** USS measures the amount of memory that is used exclusively by a process, without considering shared memory. This is important because USS indicates how much memory would actually be released if the process were terminated. It provides a more accurate reflection of a process’s individual memory footprint.
+- **Proportional Set Size(PSS):** The unshared memory (USS) plus a process’s proportion of shared memory is reported as the PSS (Proportional Set Size). The USS and PSS only include physical memory usage. They do not include memory that has been swapped out to disk.
 
 > [!IMPORTANT]
-> Task: Run `source bench.sh 1` and inspect the `log-normal-1.log` file. Write your answer in `questions.txt` in bytes. Label your answer `(1)`.
-> Modify the command that is tested in `source bench.sh 1` such that your kernel program uses at least 1GB of memory.
-
+> Task: Run `source bench.sh 1` and inspect the `log-normal-1.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(1)`.
+> Task: Run `source bench.sh 5` and inspect the `log-normal-5.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(2)`.
+> Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image. It is also okay to terminate the test early and inspect a partial log file.
 
 ## Part 3: Virtual Memory + mmap
 
-We have noticed that loading in image data into memory is expensive! Let's try to reduce the amount of memory our processes are using by having them **share** an image in memory with `mmap`.
+We have noticed that loading in image data into memory is expensive! 
+
+Let's try to reduce the amount of memory our processes are using by having them **share** an image in memory with `mmap`.
+
+To support using `mmap` to load an image into memory, we first need to save an in-memory image to binary format with mmap. We will not be able to use `mmap` on a `.bmp` file type.
 
 Thus, we want to support 3 additional modes in our cli:
 - `convert` - converts a bmp format image to binary format, ready to mmap.
@@ -150,8 +161,9 @@ You will need to have the `smem` util installed:
 > [!IMPORTANT]
 > Task: Run `source batch.sh 5` again and check the memory usage reported. 
 > Task: Run `source batch-mmap.sh 5` again and check the memory usage reported.
-> Run `python3 plot.py log-mmap-5.out log-normal-5.out` to view a memory usage graph.
-> Describe what you observe about the processes' memory usage as well as execution time in `questions.txt`. Closely look at the "image loading" phase of execution. What do you notice the difference is? Label your answer `(2)`.
+> Run `python3 plot.py log-mmap-5.out log-normal-5.out --save plot.png` to view a memory usage graph and save it in plot.png
+> Describe what you observe about the processes' memory usage as well as execution time in `questions.txt`. What do you notice the difference is? Propose a reason the execution graph looks like it does. Label your answer `(3)`.
+> Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image.
 
 ## Part 4: Page Faults
 
@@ -164,12 +176,12 @@ Let's monitor and report the number of page faults that occurs when our program 
 Notice, we have two types of page faults reported. Major and Minor page faults.
 
 > [!IMPORTANT]
-> Task: Describe the difference between major/minor page faults in `questions.txt`. Label your answer `(3)`.
+> Task: Describe the difference between major/minor page faults in `questions.txt`. Label your answer `(4)`.
 
-Let's try to tri
+Let's try to trigger a **major page fault** such that this line of output reports a value != 0.
 ```Major (requiring I/O) page faults: 0```
 
-Make a new cli command that triggers additional major page faults.
+Make a new cli command  (in `cli.c`) that triggers additional major page faults.
 
 How can you write a program that does this?
 
