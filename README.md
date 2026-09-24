@@ -198,3 +198,14 @@ Once you are done, try running:
 
 You should now see at least 1 major page fault.
 
+## Submitting on Gradescope
+
+To submit on Gradescope, submit all the files in this directory to the assignment upload.
+
+You do not need to upload the `reference/` or `images/` subdirectory.
+
+**DO NOT upload a zip.** Use Shift to select all the files in your assignment directory instead.
+
+Note: To download files from google colab, navigate to the `Assignment-5` directory that should be saved in your **Google Drive**. (Assuming you did all your work in `/content/drive/MyDrive/Assignment-5`). Clicking the three vertical dots shows a "download" option that will download all files to your local computer for upload to gradescope.
+
+You should see the autograder run and report a score. Ensure that you are happy with this score! Feel free to resubmit as many times as you wish before the deadline.
