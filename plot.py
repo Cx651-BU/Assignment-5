@@ -192,7 +192,7 @@ def plot_processes(mmap_processes, normal_processes, interval):
     )
 
     plt.tight_layout()
-    plt.show()
+    #plt.show()
 
 
 def main():
