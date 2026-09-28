@@ -8,16 +8,21 @@
  *
  * The file is expected to be in the raw format written by
  * saveimage_mmap: a struct image header followed immediately by the
- * pixel data. This is not a BMP file. The file is mapped into memory,
- * the header is copied into image, and the pixel data is copied into
- * a newly allocated buffer.
+ * pixel data. This is not a BMP file. The file is mapped into memory
+ * and the header is copied into image. The pixel data is not copied:
+ * image->pixels is set to point directly into the mapping.
  *
  * The size of the mapping is computed from image->width and
  * image->height, so the caller must set these to the expected
  * dimensions before calling. They are then overwritten with the
  * values stored in the file.
  *
- * The pixel buffer is allocated here and must be freed by the caller.
+ * The mapping is read-only, so the pixel data must not be modified
+ * through image->pixels. The mapping remains valid after this function
+ * returns and must be released by the caller with munmap(), not free().
+ * The mapping starts sizeof(struct image) bytes before image->pixels
+ * and its length is width * height * sizeof(struct pixel) +
+ * sizeof(struct image), using the dimensions passed in.
  *
  * Returns 0 on success, or -1 if the file cannot be opened or mapped.
  */
