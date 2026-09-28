@@ -42,7 +42,6 @@ Image:
 01 02 03 04
 05 06 07 08
 09 10 11 12
-13 14 15 16
 ```
 
 ```
@@ -50,7 +49,6 @@ Output:
 01 02 03 04
 05 06 07 08
 09 10 11 12
-13 14 15 16
 ```
 
 ```
@@ -62,15 +60,14 @@ kernel:
 
 Kernel 05 is the **origin** of the kernel. When calculating an output value, we perform the following calculation:
 
-`output07 = (kernel01 * image02 + kernel02 * image03 + kernel03 * image04 + kernel05 * image06 + kernel05 * image07 + kernel06 * image08 + kernel07 * image10 + kernel08 * image11 + kernel09 * image12) * normalization`.
+`output07 = (kernel01 * image02 + kernel02 * image03 + kernel03 * image04 + kernel04 * image06 + kernel05 * image07 + kernel06 * image08 + kernel07 * image10 + kernel08 * image11 + kernel09 * image12) * normalization`.
 
 ### Edge Case
 
 We also must consider what to do when the kernel would be multiplied by a pixel that is off the edge of the image. In our case, let's consider any pixel that is not on the image to be "black" with a value of {0,0,0}.
 
 > [!IMPORTANT]
-> - **Task:** Implement the `apply_kernel` function that applies the image kernel to a loaded image.
-> - **Task:** Implement a parser in `cli` such that you can run your kernel with: `./cli images/sky.bmp 640 426 out.bmp`
+> Task: Implement the apply_kernel function that applies the image kernel to a loaded image.
 
 When you complete this task you should pass `./test 0` and `./test 1`:
 
@@ -125,9 +122,9 @@ You will need to have the `smem` util installed:
 - **Proportional Set Size(PSS):** The unshared memory (USS) plus a process’s proportion of shared memory is reported as the PSS (Proportional Set Size). The USS and PSS only include physical memory usage. They do not include memory that has been swapped out to disk.
 
 > [!IMPORTANT]
-> - Task: Run `source bench.sh 1` and inspect the `log-normal-1.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(1)`.
-> - Task: Run `source bench.sh 5` and inspect the `log-normal-5.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(2)`.
-> - Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image. It is also okay to terminate the test early and inspect a partial log file.
+> Task: Run `source bench.sh 1` and inspect the `log-normal-1.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(1)`.
+> Task: Run `source bench.sh 5` and inspect the `log-normal-5.log` file. How much memory does an instance of your program use? Write your answer in `questions.txt` in bytes. Label your answer `(2)`.
+> Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image. It is also okay to terminate the test early and inspect a partial log file.
 
 ## Part 3: Virtual Memory + mmap
 
@@ -140,15 +137,14 @@ To support using `mmap` to load an image into memory, we first need to save an i
 Thus, we want to support 3 additional modes in our cli:
 - `convert` - converts a bmp format image to binary format, ready to mmap.
 - `uconvert` - "unconverts" a binary format image to bmp
-- `mmap` - runs the kernel with mmap input (instead of bmp)
+- `mmap` - runs the kernel with mmap input
 
 
-Using `mmap` will have two nice benefits: the input image will no longer be need to be re-allocated in every process. Instead, the instances of the image can all share the same mmap-ed pixel array of image data.
+Using `mmap` will have two nice benefits: the input image will no longer be shared and the output 
 
 > [!IMPORTANT]
-> - Task: Complete the implementation of `loadimage_mmap` and `saveimage_mmap` in `loader.c`.
->   - Note that loadimage_mmap should not allocate a new pixels array, but should use the array from a (READ-ONLY) mmapped region. You will need to `munmap` the region correctly later instead of freeing.
-> - Task: Modify the cli program to parse and correctly run the `convert`,`uconvert`, and `mmap` modes.
+> Task: Complete the implementation of `loadimage_mmap` and `saveimage_mmap` in `loader.c`.
+> Task: Modify the cli program to parse and correctly run the convert,uconvert, and mmap modes.
 
 After you implement this functionality you should be able to pass `./test 2` and `./test 3`:
 
@@ -163,11 +159,11 @@ You will need to have the `smem` util installed:
 ```sudo apt install smem```
 
 > [!IMPORTANT]
-> - Task: Run `source bench.sh 5` again and check the memory usage reported. 
-> - Task: Run `source bench-mmap.sh 5` again and check the memory usage reported.
-> - Run `python3 plot.py log-mmap-5.out log-normal-5.out --save plot.png` to view a memory usage graph and save it in plot.png
-> - Describe what you observe about the processes' memory usage as well as execution time in `questions.txt`. What do you notice the difference is? Propose a reason the execution graph looks like it does. Label your answer `(3)`.
-> - Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image.
+> Task: Run `source bench.sh 5` again and check the memory usage reported. 
+> Task: Run `source bench-mmap.sh 5` again and check the memory usage reported.
+> Run `python3 plot.py log-mmap-5.out log-normal-5.out --save plot.png` to view a memory usage graph and save it in plot.png
+> Describe what you observe about the processes' memory usage as well as execution time in `questions.txt`. What do you notice the difference is? Propose a reason the execution graph looks like it does. Label your answer `(3)`.
+> Note: Depending on your physical machine, this test may take a long time to run. If it is taking FAR too long, change the sizes/number of processes that `bench.sh` is using to attempt processing a smaller image.
 
 ## Part 4: Page Faults
 
@@ -180,7 +176,7 @@ Let's monitor and report the number of page faults that occurs when our program 
 Notice, we have two types of page faults reported. Major and Minor page faults.
 
 > [!IMPORTANT]
-> - **Task:** Describe the difference between major/minor page faults in `questions.txt`. Label your answer `(4)`.
+> Task: Describe the difference between major/minor page faults in `questions.txt`. Label your answer `(4)`.
 
 Let's try to trigger a **major page fault** such that this line of output reports a value != 0.
 ```Major (requiring I/O) page faults: 0```
@@ -190,7 +186,7 @@ Make a new cli command  (in `cli.c`) that triggers additional major page faults.
 How can you write a program that does this?
 
 > [!IMPORTANT]
-> - **Task:** Complete the `fault` mode to call `generate_pagefault` which should generate a **major** pagefault.
+> Task: Complete the `fault` mode to call `generate_pagefault` which should generate a **major** pagefault.
 
 
 **Hint:** You may be able to use `saveimage_mmap` to generate your pagefault!
