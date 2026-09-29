@@ -35,7 +35,7 @@ for each image row in input image:
          set output image pixel to accumulator * normalization
 ```
 
-Consider for example we have a 4x4 image, a 3x3 kernel and 4x4 output:
+Consider for example we have a 3x4 image, a 3x3 kernel and 3x4 output:
 
 ```
 Image:
@@ -66,8 +66,10 @@ Kernel 05 is the **origin** of the kernel. When calculating an output value, we 
 
 We also must consider what to do when the kernel would be multiplied by a pixel that is off the edge of the image. In our case, let's consider any pixel that is not on the image to be "black" with a value of {0,0,0}.
 
+Part 1 also requires completing the kernel mode in cli.c. Fill in the relevant TODOs so the program parses the command-line arguments, selects kernel mode, loads the input image, applies the kernel, and saves the output. Implement the kernel operation in kernel.c. The convert, uconvert, and mmap modes are addressed in Part 3.
+
 > [!IMPORTANT]
-> Task: Implement the apply_kernel function that applies the image kernel to a loaded image.
+> Task: Implement `apply_kernel` in `kernel.c` and complete the kernel mode in `cli.c`.
 
 When you complete this task you should pass `./test 0` and `./test 1`:
 
