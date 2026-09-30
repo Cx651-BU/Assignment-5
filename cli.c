@@ -14,7 +14,7 @@ int main(int argc, char** argv){
     // You can expect argv[5] to be the output filepath.
 
     if(argc != 6) {
-        printf("Incorrect number of arguments. Expected: ./build/image_calc <MODE=kernel|mmap|convert|uconvert|fault> <input_image> <width> <height> <output_image_path>\n");
+        printf("Incorrect number of arguments. Expected: ./cli <MODE=kernel|mmap|convert|uconvert|fault> <input_image> <width> <height> <output_image_path>\n");
         return -1;
     }
 
